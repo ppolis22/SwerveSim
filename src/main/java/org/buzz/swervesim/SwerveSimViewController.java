@@ -17,6 +17,12 @@ public class SwerveSimViewController {
     @FXML
     private Slider angleSlider;
 
+    @FXML
+    private Slider magnitudeSlider;
+
+    @FXML
+    private Slider twistSlider;
+
     private SwerveSimController appController;
     private GraphicsContext canvasGC;
     private static final double DIR_VEC_SCALE = 8.0;
@@ -78,11 +84,11 @@ public class SwerveSimViewController {
     }
 
     public double getStickMagnitude() {
-        return 0.3;
+        return magnitudeSlider.getValue();
     }
 
     public double getStickTwist() {
-        return 0.0;
+        return twistSlider.getValue();
     }
 
     // convenience methods to make positive direction movement appear "up" on the canvas
