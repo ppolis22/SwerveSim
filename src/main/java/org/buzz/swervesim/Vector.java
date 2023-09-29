@@ -14,8 +14,12 @@ public class Vector {
     }
 
     public void normalize() {
-        double magnitude = Math.sqrt((Math.pow(x, 2) + Math.pow(y, 2)));
+        double magnitude = getMagnitude();
         x /= magnitude;
         y /= magnitude;
+    }
+
+    public double getMagnitude() {
+        return Math.sqrt((Math.pow(x, 2) + Math.pow(y, 2)));
     }
 }

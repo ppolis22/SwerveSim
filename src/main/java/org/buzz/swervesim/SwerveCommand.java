@@ -17,41 +17,45 @@ public class SwerveCommand {
         }
 
         double stickAngle = 90.0;
-        double stickMagnitude = 0.5;
-        double stickTwist = 0.5;
+        double stickMagnitude = 0.0;
+        double stickTwist = 0.25;
 
-//        double localStickAngle = 90.0 + stickAngle - gyroAngle;
-//
-//        // 225 deg
-//        Vector flTwist = new Vector(
-//                stickTwist * Math.cos(Math.toRadians(225.0)),
-//                stickTwist * Math.sin(Math.toRadians(225.0)));
-//
-//        Vector flMove = new Vector(
-//                stickMagnitude * Math.cos(Math.toRadians(localStickAngle)),
-//                stickMagnitude * Math.sin(Math.toRadians(localStickAngle)));
-//
-//        // sum the vectors and normalize
-//        Vector flResult = new Vector(flTwist.x + flMove.x, flTwist.y + flMove.y);
-//        flResult.normalize();
+        double localStickAngle = 90.0 + stickAngle - gyroAngle;
 
-        fl.setGoalAngle(stickAngle);
-        frontLeft.setTurnSpeed(fl.getMotorOutput());
-        frontLeft.setDriveSpeed(stickMagnitude);
-
-        fr.setGoalAngle(stickAngle);
-        frontRight.setTurnSpeed(fr.getMotorOutput());
-        frontRight.setDriveSpeed(stickMagnitude);
-
-        rl.setGoalAngle(stickAngle);
-        rearLeft.setTurnSpeed(rl.getMotorOutput());
-        rearLeft.setDriveSpeed(stickMagnitude);
-
-        rr.setGoalAngle(stickAngle);
-        rearRight.setTurnSpeed(rr.getMotorOutput());
-        rearRight.setDriveSpeed(stickMagnitude);
+        updateWheelParameters(225.0, stickTwist, localStickAngle, stickMagnitude, frontLeft, fl);
+        updateWheelParameters(135.0, stickTwist, localStickAngle, stickMagnitude, frontRight, fr);
+        updateWheelParameters(315.0, stickTwist, localStickAngle, stickMagnitude, rearLeft, rl);
+        updateWheelParameters(45.0, stickTwist, localStickAngle, stickMagnitude, rearRight, rr);
     }
 
+    private void updateWheelParameters(double wheelTwistAngle, double stickTwist, double localStickAngle, double stickMagnitude,
+                                       Wheel wheel, SwivelController controller) {
+        Vector result = getResultVector(wheelTwistAngle, stickTwist, localStickAngle, stickMagnitude);
+        double resultAngle = Math.toDegrees(Math.atan2(result.y, result.x)) % 360.0;
+        double resultMagnitude = result.getMagnitude();
+
+        controller.setGoalAngle(resultAngle);
+        wheel.setTurnSpeed(controller.getMotorOutput());
+        wheel.setDriveSpeed(resultMagnitude);
+    }
+
+    private Vector getResultVector(double wheelTwistAngle, double stickTwist, double localStickAngle, double stickMagnitude) {
+        Vector twist = new Vector(
+                stickTwist * Math.cos(Math.toRadians(wheelTwistAngle)),
+                stickTwist * Math.sin(Math.toRadians(wheelTwistAngle)));
+
+        Vector move = new Vector(
+                stickMagnitude * Math.cos(Math.toRadians(localStickAngle)),
+                stickMagnitude * Math.sin(Math.toRadians(localStickAngle)));
+
+        // sum the vectors and clamp to 1.0 magnitude (?) or scale proportionately (?)
+        Vector result = new Vector(twist.x + move.x, twist.y + move.y);
+        if (result.getMagnitude() > 1.0) {
+            result.normalize();
+        }
+
+        return result;
+    }
 }
 
 class SwivelController {

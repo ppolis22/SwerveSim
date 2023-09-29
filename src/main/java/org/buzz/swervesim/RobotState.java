@@ -18,10 +18,10 @@ public class RobotState {
         gyroAngle = 90.0;
         direction = new Vector(0.0, -1.0);
 
-        frontLeft = new Wheel(location.fromOffset(WIDTH / 2.0, HEIGHT / 2.0));
-        frontRight = new Wheel(location.fromOffset(-WIDTH / 2.0, HEIGHT / 2.0));
-        rearLeft = new Wheel(location.fromOffset(WIDTH / 2.0, -HEIGHT / 2.0));
-        rearRight = new Wheel(location.fromOffset(-WIDTH / 2.0, -HEIGHT / 2.0));
+        frontLeft = new Wheel(location.fromOffset(-WIDTH / 2.0, HEIGHT / 2.0));
+        frontRight = new Wheel(location.fromOffset(WIDTH / 2.0, HEIGHT / 2.0));
+        rearLeft = new Wheel(location.fromOffset(-WIDTH / 2.0, -HEIGHT / 2.0));
+        rearRight = new Wheel(location.fromOffset(WIDTH / 2.0, -HEIGHT / 2.0));
     }
 
     public void update() {
@@ -67,6 +67,6 @@ public class RobotState {
         location = front.average(rear);
         direction = new Vector(front.x - location.x, front.y - location.y);
         direction.normalize();
-        gyroAngle = Math.toDegrees(Math.atan(direction.y / direction.x));
+        gyroAngle = Math.toDegrees(Math.atan2(direction.y, direction.x));
     }
 }
