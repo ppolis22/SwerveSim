@@ -12,12 +12,12 @@ public class SwerveSimController {
     private final Timeline swerveSimTask;
     private boolean isStarted;
 
-    public SwerveSimController(SwerveSimViewController viewController, SwerveCommand command) {
-        this.command = command;
+    public SwerveSimController(SwerveSimViewController viewController) {
         this.viewController = viewController;
         viewController.setAppController(this);
 
         robotState = new RobotState(200.0, 100.0);
+        command = new SwerveCommand(robotState);
 
         swerveSimTask = new Timeline(new KeyFrame(Duration.millis(100), event -> {
                 advanceFrame();
@@ -28,9 +28,13 @@ public class SwerveSimController {
     }
 
     public void advanceFrame() {
-        command.execute(robotState.getFrontLeft(), robotState.getFrontRight(),
-                robotState.getRearLeft(), robotState.getRearRight(),
-                robotState.getGyroAngle());
+        viewController.getStickAngle();
+        viewController.getStickMagnitude();
+        viewController.getStickTwist();
+
+        command.execute(
+                new InputState(viewController.getStickAngle(), viewController.getStickMagnitude(), viewController.getStickTwist())
+        );
 
         robotState.update();
 

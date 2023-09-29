@@ -17,7 +17,7 @@ public class SwerveSimApplication extends Application {
         stage.setScene(scene);
         stage.show();
 
-        SwerveSimController appController = new SwerveSimController(viewController, new SwerveCommand());
+        SwerveSimController appController = new SwerveSimController(viewController);
     }
 
     public static void main(String[] args) {

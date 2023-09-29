@@ -2,25 +2,28 @@ package org.buzz.swervesim;
 
 public class SwerveCommand {
 
-    SwivelController fl = null;
-    SwivelController fr = null;
-    SwivelController rl = null;
-    SwivelController rr = null;
+    private final RobotState robotState;
+    private final Wheel frontLeft, frontRight, rearLeft, rearRight;
+    private final SwivelController fl, fr, rl, rr;
 
-    public void execute(Wheel frontLeft, Wheel frontRight, Wheel rearLeft, Wheel rearRight, double gyroAngle) {
+    public SwerveCommand(RobotState robotState) {
+        this.robotState = robotState;
+        this.frontLeft = robotState.getFrontLeft();
+        this.frontRight = robotState.getFrontRight();
+        this.rearLeft = robotState.getRearLeft();
+        this.rearRight = robotState.getRearRight();
+        this.fl = new SwivelController(this.frontLeft);
+        this.fr = new SwivelController(this.frontRight);
+        this.rl = new SwivelController(this.rearLeft);
+        this.rr = new SwivelController(this.rearRight);
+    }
 
-        if (fl == null) {
-            fl = new SwivelController(frontLeft);
-            fr = new SwivelController(frontRight);
-            rl = new SwivelController(rearLeft);
-            rr = new SwivelController(rearRight);
-        }
+    public void execute(InputState inputs) {
+        double stickAngle = inputs.getStickAngle();
+        double stickMagnitude = inputs.getStickMagnitude();
+        double stickTwist = inputs.getStickTwist();
 
-        double stickAngle = 90.0;
-        double stickMagnitude = 0.25;
-        double stickTwist = 0.25;
-
-        double localStickAngle = 90.0 + stickAngle - gyroAngle;
+        double localStickAngle = 90.0 + stickAngle - robotState.getGyroAngle();
 
         updateWheelParameters(225.0, stickTwist, localStickAngle, stickMagnitude, frontLeft, fl);
         updateWheelParameters(135.0, stickTwist, localStickAngle, stickMagnitude, frontRight, fr);
@@ -67,35 +70,5 @@ public class SwerveCommand {
         }
 
         return result;
-    }
-}
-
-class SwivelController {
-    private Wheel wheel;
-    private double goalAngle;
-
-    public SwivelController(Wheel wheel) {
-        this.wheel = wheel;
-        this.goalAngle = wheel.getTurnAngle();
-    }
-
-    public void setGoalAngle(double newGoal) {
-        goalAngle = newGoal;
-    }
-
-    public double getMotorOutput() {
-        double error = getSmallestSignedError();
-        double output = error / 180.0;    // P
-
-        return output;
-    }
-
-    // a little hacky to expose this, should find better way
-    public double getSmallestSignedError() {
-        double error = goalAngle - wheel.getTurnAngle();
-        if (Math.abs(error) > 180) {
-            error -= Math.signum(error) * 360;
-        }
-        return error;
     }
 }

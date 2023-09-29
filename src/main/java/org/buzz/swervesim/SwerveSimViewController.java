@@ -4,6 +4,7 @@ import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
+import javafx.scene.control.Slider;
 import javafx.scene.paint.Color;
 
 public class SwerveSimViewController {
@@ -12,6 +13,9 @@ public class SwerveSimViewController {
 
     @FXML
     private Button frameButton;
+
+    @FXML
+    private Slider angleSlider;
 
     private SwerveSimController appController;
     private GraphicsContext canvasGC;
@@ -67,6 +71,18 @@ public class SwerveSimViewController {
         drawRectInverted(p.x - 3, p.y + 3, 6, 6);
         canvasGC.setStroke(Color.LIGHTSALMON);
         drawLineInverted(p.x, p.y,p.x + v.x * ROBOT_VEC_SCALE, p.y + v.y * ROBOT_VEC_SCALE);
+    }
+
+    public double getStickAngle() {
+        return angleSlider.getValue();
+    }
+
+    public double getStickMagnitude() {
+        return 0.3;
+    }
+
+    public double getStickTwist() {
+        return 0.0;
     }
 
     // convenience methods to make positive direction movement appear "up" on the canvas

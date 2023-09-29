@@ -8,6 +8,7 @@
 <?import javafx.scene.canvas.Canvas?>
 
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.control.Slider?>
 <VBox alignment="CENTER" spacing="20.0" xmlns:fx="http://javafx.com/fxml"
       fx:controller="org.buzz.swervesim.SwerveSimViewController">
     <padding>
@@ -17,6 +18,7 @@
     <Canvas fx:id="canvas" height="400.0" width="400.0"/>
 
     <HBox alignment="CENTER" spacing="20.0">
+        <Slider fx:id="angleSlider" minWidth="200" blockIncrement="1" minorTickCount="5" majorTickUnit="45" max="359" showTickMarks="true" value="90" />
         <Button fx:id="frameButton" text="Frame" onAction="#onFrameButtonClick"/>
         <Button fx:id="startButton" text="Start" onAction="#onStartButtonClick"/>
         <Button fx:id="stopButton" text="Stop" onAction="#onStopButtonClick"/>
