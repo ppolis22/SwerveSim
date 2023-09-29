@@ -6,8 +6,9 @@ public class Wheel {
     private double turnAngle;
     private Vector directionVector;
     private Point location;
+    private boolean isInverted;
 
-    private static final double TURN_SCALE = 15.0;  // rate of turn, 0.0 = 0deg per frame, 1.0 = 15 deg per frame
+    private static final double TURN_SCALE = 45.0;  // rate of turn, 0.0 = 0deg per frame, 1.0 = 15 deg per frame
     private static final double DRIVE_SCALE = 5.0;  // rate of drive, 0.0 = 0px per frame, 1.0 = 5px per frame
 
     public Wheel(Point location) {
@@ -16,6 +17,7 @@ public class Wheel {
         this.turnSpeed = 0.0;
         this.turnAngle = 90.0;
         this.directionVector = new Vector();
+        this.isInverted = false;
         update(90.0);   // calculate direction vector
     }
 
@@ -51,7 +53,7 @@ public class Wheel {
 
     public void update(double gyroAngle) {
         double adjustedTurnSpeed = turnSpeed * TURN_SCALE;
-        double adjustedDriveSpeed = driveSpeed * DRIVE_SCALE;
+        double adjustedDriveSpeed = driveSpeed * DRIVE_SCALE * (isInverted ? -1.0 : 1.0);
 
         turnAngle = (turnAngle + adjustedTurnSpeed) % 360.0;
         double globalTurnAngle = gyroAngle + turnAngle - 90.0;  // not sure about this transformation
@@ -61,5 +63,13 @@ public class Wheel {
         directionVector.x = xOffset;
         directionVector.y = yOffset;
         location.offset(directionVector);
+    }
+
+    public void setInverted(boolean inverted) {
+        this.isInverted = inverted;
+    }
+
+    public boolean isInverted() {
+        return isInverted;
     }
 }

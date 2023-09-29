@@ -17,7 +17,7 @@ public class SwerveCommand {
         }
 
         double stickAngle = 90.0;
-        double stickMagnitude = 0.0;
+        double stickMagnitude = 0.25;
         double stickTwist = 0.25;
 
         double localStickAngle = 90.0 + stickAngle - gyroAngle;
@@ -31,12 +31,26 @@ public class SwerveCommand {
     private void updateWheelParameters(double wheelTwistAngle, double stickTwist, double localStickAngle, double stickMagnitude,
                                        Wheel wheel, SwivelController controller) {
         Vector result = getResultVector(wheelTwistAngle, stickTwist, localStickAngle, stickMagnitude);
-        double resultAngle = Math.toDegrees(Math.atan2(result.y, result.x)) % 360.0;
-        double resultMagnitude = result.getMagnitude();
+        double goalAngle = (Math.toDegrees(Math.atan2(result.y, result.x)) + 360.0) % 360.0;
+        double goalSpeed = result.getMagnitude();
 
-        controller.setGoalAngle(resultAngle);
+        // determine error in shortest turn direction
+        double wheelAngle = wheel.getTurnAngle();
+        double error = goalAngle - wheelAngle;
+        if (Math.abs(error) > 180) {
+            error -= Math.signum(error) * 360;
+        }
+
+        if (Math.abs(error) > 90.0) {
+            wheel.setInverted(true);
+            controller.setGoalAngle((wheelAngle + error + 180.0) % 360.0);
+        } else {
+            wheel.setInverted(false);
+            controller.setGoalAngle(wheelAngle + error);
+        }
+
         wheel.setTurnSpeed(controller.getMotorOutput());
-        wheel.setDriveSpeed(resultMagnitude);
+        wheel.setDriveSpeed(goalSpeed);
     }
 
     private Vector getResultVector(double wheelTwistAngle, double stickTwist, double localStickAngle, double stickMagnitude) {
@@ -72,16 +86,10 @@ class SwivelController {
     }
 
     public double getMotorOutput() {
-        double output = 0.0;
-
-        // determine error in shortest turn direction
         double wheelAngle = wheel.getTurnAngle();
         double error = goalAngle - wheelAngle;
-        if (Math.abs(error) > 180) {
-            error -= Math.signum(error) * 360;
-        }
 
-        output += error / 180.0;    // P
+        double output = error / 180.0;    // P
 
         return output;
     }

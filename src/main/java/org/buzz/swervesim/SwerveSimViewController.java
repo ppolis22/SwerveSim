@@ -46,10 +46,10 @@ public class SwerveSimViewController {
         this.appController = controller;
     }
 
-    public void drawWheel(Point p, Vector v) {
+    public void drawWheel(Point p, Vector v, boolean inverted) {
         canvasGC.setFill(Color.BLUE);
         drawRectInverted(p.x - 3, p.y + 3, 6, 6);
-        canvasGC.setStroke(Color.LIGHTBLUE);
+        canvasGC.setStroke(inverted ? Color.LAWNGREEN : Color.LIGHTBLUE);
         drawLineInverted(p.x, p.y,p.x + v.x * DIR_VEC_SCALE, p.y + v.y * DIR_VEC_SCALE);
     }
 

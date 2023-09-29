@@ -17,7 +17,7 @@ public class SwerveSimController {
         this.viewController = viewController;
         viewController.setAppController(this);
 
-        robotState = new RobotState(200.0, 200.0);
+        robotState = new RobotState(200.0, 100.0);
 
         swerveSimTask = new Timeline(new KeyFrame(Duration.millis(100), event -> {
                 advanceFrame();
@@ -35,10 +35,10 @@ public class SwerveSimController {
         robotState.update();
 
         viewController.clearCanvas();
-        viewController.drawWheel(robotState.getFrontLeft().getLocation(), robotState.getFrontLeft().getDirectionVector());
-        viewController.drawWheel(robotState.getFrontRight().getLocation(), robotState.getFrontRight().getDirectionVector());
-        viewController.drawWheel(robotState.getRearLeft().getLocation(), robotState.getRearLeft().getDirectionVector());
-        viewController.drawWheel(robotState.getRearRight().getLocation(), robotState.getRearRight().getDirectionVector());
+        viewController.drawWheel(robotState.getFrontLeft().getLocation(), robotState.getFrontLeft().getDirectionVector(), robotState.getFrontLeft().isInverted());
+        viewController.drawWheel(robotState.getFrontRight().getLocation(), robotState.getFrontRight().getDirectionVector(), robotState.getFrontRight().isInverted());
+        viewController.drawWheel(robotState.getRearLeft().getLocation(), robotState.getRearLeft().getDirectionVector(), robotState.getRearLeft().isInverted());
+        viewController.drawWheel(robotState.getRearRight().getLocation(), robotState.getRearRight().getDirectionVector(), robotState.getRearRight().isInverted());
         viewController.drawRobotCenter(robotState.getLocation(), robotState.getDirectionVector());
     }
 
