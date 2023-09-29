@@ -29,27 +29,25 @@ public class SwerveCommand {
     }
 
     private void updateWheelParameters(double wheelTwistAngle, double stickTwist, double localStickAngle, double stickMagnitude,
-                                       Wheel wheel, SwivelController controller) {
+                                       Wheel wheel, SwivelController wheelController) {
         Vector result = getResultVector(wheelTwistAngle, stickTwist, localStickAngle, stickMagnitude);
         double goalAngle = (Math.toDegrees(Math.atan2(result.y, result.x)) + 360.0) % 360.0;
         double goalSpeed = result.getMagnitude();
 
         // determine error in shortest turn direction
-        double wheelAngle = wheel.getTurnAngle();
-        double error = goalAngle - wheelAngle;
-        if (Math.abs(error) > 180) {
-            error -= Math.signum(error) * 360;
-        }
+        wheelController.setGoalAngle(goalAngle);
+        double error = wheelController.getSmallestSignedError();
 
+        // if shortest turn is still over 90deg, would be faster to reverse drive
         if (Math.abs(error) > 90.0) {
             wheel.setInverted(true);
-            controller.setGoalAngle((wheelAngle + error + 180.0) % 360.0);
+            wheelController.setGoalAngle((wheel.getTurnAngle() + error + 180.0) % 360.0);
         } else {
             wheel.setInverted(false);
-            controller.setGoalAngle(wheelAngle + error);
+            wheelController.setGoalAngle(wheel.getTurnAngle() + error);
         }
 
-        wheel.setTurnSpeed(controller.getMotorOutput());
+        wheel.setTurnSpeed(wheelController.getMotorOutput());
         wheel.setDriveSpeed(goalSpeed);
     }
 
@@ -86,11 +84,18 @@ class SwivelController {
     }
 
     public double getMotorOutput() {
-        double wheelAngle = wheel.getTurnAngle();
-        double error = goalAngle - wheelAngle;
-
+        double error = getSmallestSignedError();
         double output = error / 180.0;    // P
 
         return output;
+    }
+
+    // a little hacky to expose this, should find better way
+    public double getSmallestSignedError() {
+        double error = goalAngle - wheel.getTurnAngle();
+        if (Math.abs(error) > 180) {
+            error -= Math.signum(error) * 360;
+        }
+        return error;
     }
 }
