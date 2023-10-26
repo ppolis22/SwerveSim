@@ -8,7 +8,7 @@ public class Wheel {
     private Point location;
     private boolean isInverted;
 
-    private static final double TURN_SCALE = 45.0;  // rate of turn, 0.0 = 0deg per frame, 1.0 = 15 deg per frame
+    private static final double TURN_SCALE = 45.0;  // rate of turn, 0.0 = 0deg per frame, 1.0 = 45 deg per frame
     private static final double DRIVE_SCALE = 5.0;  // rate of drive, 0.0 = 0px per frame, 1.0 = 5px per frame
 
     public Wheel(Point location) {

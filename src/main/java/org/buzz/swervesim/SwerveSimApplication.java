@@ -13,7 +13,7 @@ public class SwerveSimApplication extends Application {
         FXMLLoader fxmlLoader = new FXMLLoader(SwerveSimApplication.class.getResource("swerve-sim-view.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), 500, 600);
         SwerveSimViewController viewController = fxmlLoader.getController();
-        stage.setTitle("Hello!");
+        stage.setTitle("Swerve Sim");
         stage.setScene(scene);
         stage.show();
 
